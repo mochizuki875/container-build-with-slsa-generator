@@ -19,7 +19,7 @@ Attestationは`<DIGEST>.att`という名前でコンテナレジストリに保�
 ```bash
 $ crane ls ghcr.io/mochizuki875/slsa-generator-demo
 main
-<DIGEST>.att
+<DIGEST>.att 
 ```
 ```bash
 $ crane digest ghcr.io/mochizuki875/slsa-generator-demo:main

@@ -22,9 +22,9 @@ on:
       # image:
       #   description: 'Built container image name'
       #   value: ${{ jobs.publish.outputs.image }}
-      # image:
-      #   description: 'Built container registry/image name'
-      #   value: ${{ jobs.publish.outputs.image_name }}
+      image-name:
+        description: 'Built container registry/image name'
+        value: ${{ jobs.publish.outputs.image-name }}
       image-digest:
         description: 'Built container image digest'
         value: ${{ jobs.publish.outputs.image-digest }}
@@ -35,7 +35,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      # image_name: ${{ steps.image.outputs.image_name }}
+      image-name: ${{ steps.image.outputs.image-name }}
       image-digest: ${{ steps.build.outputs.digest }}
     runs-on: ubuntu-latest
     steps:
@@ -70,10 +70,10 @@ jobs:
           provenance: false
           sbom: false
 
-      # - name: Output image
-      #   id: image
-      #   run: |
-      #     # NOTE: Set the image as an output because the `env` context is not
-      #     # available to the inputs of a reusable workflow call.
-      #     image_name="${{ inputs.image_registry }}/${{ inputs.image_name }}"
-      #     echo "image=$image_name" >> "$GITHUB_OUTPUT"
+      - name: Output image
+        id: image
+        run: |
+          # NOTE: Set the image as an output because the `env` context is not
+          # available to the inputs of a reusable workflow call.
+          image-name="${{ inputs.image-registry }}/${{ inputs.image-name }}"
+          echo "image=$image-name" >> "$GITHUB_OUTPUT"

@@ -19,9 +19,12 @@ on:
         description: 'GitHub token for authentication'
         required: true
     outputs:
-      image:
+      # image:
+      #   description: 'Built container image name'
+      #   value: ${{ jobs.publish.outputs.image }}
+      image_name:
         description: 'Built container image name'
-        value: ${{ jobs.publish.outputs.image }}
+        value: ${{ jobs.publish.outputs.image_name }}
       digest:
         description: 'Built container image digest'
         value: ${{ jobs.publish.outputs.digest }}

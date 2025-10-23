@@ -1,0 +1,84 @@
+name: Container Image Build with SLSA Provenance
+on:
+  workflow_dispatch:  # 手動実行をtriggerにする
+  push:
+
+env:
+  IMAGE_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+      digest: ${{ steps.build.outputs.digest }}
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout the repository  # docker/build-push-actionでGit Contextを使う場合は不要
+      #   uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate Docker
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Container image
+        id: build
+        uses: docker/build-push-action@v6
+        with:  # contextを指定しないことでGit Contextが使われる
+          # context: .
+          file: Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}  # Get tags from outputs of meta step
+          labels: ${{ steps.meta.outputs.labels }}  # Get labels from outputs of meta step
+
+      - name: Output image
+        id: image
+        run: |
+          # NOTE: Set the image as an output because the `env` context is not
+          # available to the inputs of a reusable workflow call.
+          image_name="${IMAGE_REGISTRY}/${IMAGE_NAME}"
+          echo "image=$image_name" >> "$GITHUB_OUTPUT"
+
+  # [デバッグ] GitHub Contextの中身を確認する
+  check-github-context:
+    runs-on: arc-runner-set-arc-container-build-demo
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - id: check
+        run: |
+          echo "↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓" 
+          echo "$GITHUB_CONTEXT"
+          echo "↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑"
+            
+
+  # This step calls the container workflow to generate provenance and push it to the container registry.
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read # for detecting the Github Actions environment.
+      id-token: write # for creating OIDC tokens for signing.
+      packages: write # for uploading attestations.
+    # if: startsWith(github.ref, 'refs/tags/') # タグが付いたときのみ実行
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.1.0  # Provenanceを生成するReusable Workflowを呼び出す
+    with:
+      image: ${{ needs.build.outputs.image }}
+      digest: ${{ needs.build.outputs.digest }}
+      registry-username: ${{ github.actor }}
+    secrets:
+      registry-password: ${{ secrets.GITHUB_TOKEN }}

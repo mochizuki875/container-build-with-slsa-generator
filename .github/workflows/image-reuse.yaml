@@ -19,12 +19,9 @@ on:
         description: 'GitHub token for authentication'
         required: true
     outputs:
-      # image:
-      #   description: 'Built container image name'
-      #   value: ${{ jobs.publish.outputs.image }}
-      image-name:
-        description: 'Built container registry/image name'
-        value: ${{ jobs.publish.outputs.image-name }}
+      image:
+        description: 'Built container image name'
+        value: ${{ jobs.publish.outputs.image }}
       image-digest:
         description: 'Built container image digest'
         value: ${{ jobs.publish.outputs.image-digest }}
@@ -35,7 +32,7 @@ jobs:
       contents: read
       packages: write
     outputs:
-      image-name: ${{ steps.image.outputs.image-name }}
+      image: ${{ steps.image.outputs.image }}
       image-digest: ${{ steps.build.outputs.digest }}
     runs-on: ubuntu-latest
     steps:
@@ -76,4 +73,4 @@ jobs:
           # NOTE: Set the image as an output because the `env` context is not
           # available to the inputs of a reusable workflow call.
           image_name="${{ inputs.image-registry }}/${{ inputs.image-name }}"
-          echo "image-name=$image_name" >> "$GITHUB_OUTPUT"
+          echo "image=$image_name" >> "$GITHUB_OUTPUT"

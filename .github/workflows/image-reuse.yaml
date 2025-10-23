@@ -75,5 +75,5 @@ jobs:
         run: |
           # NOTE: Set the image as an output because the `env` context is not
           # available to the inputs of a reusable workflow call.
-          image-name="${{ inputs.image-registry }}/${{ inputs.image-name }}"
-          echo "image=$image-name" >> "$GITHUB_OUTPUT"
+          echo image-name="${{ inputs.image-registry }}/${{ inputs.image-name }}" >> "$GITHUB_OUTPUT"
+          # echo "image=$image-name" >> "$GITHUB_OUTPUT"

@@ -34,7 +34,7 @@ jobs:
             
 
   # This step calls the container workflow to generate provenance and push it to the container registry.
-  provenance:
+  build-and-publish-provenance:
     needs: [image-build-and-push]
     permissions:
       actions: read # for detecting the Github Actions environment.

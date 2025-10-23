@@ -9,6 +9,8 @@ Demonstration of `slsa-github-generator`.
 dockerのActionsが古いバージョンなので、最新のバージョンに更新した。
 (そうしないと`set-output`のdeprecatedのエラーが出る)
 
+- [成果物の構成証明と再利用可能なワークフローを使用して SLSA v1 ビルド レベル 3 を実現する](https://docs.github.com/ja/actions/how-tos/secure-your-work/use-artifact-attestations/increase-security-rating#building-with-a-reusable-workflow)
+  - ビルドジョブをReusable Workflowとして実行するよう指示があるため従った
 
 ## Attestation
 タグの一覧表示

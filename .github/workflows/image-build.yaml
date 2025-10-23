@@ -56,7 +56,7 @@ jobs:
 
   # [デバッグ] GitHub Contextの中身を確認する
   check-github-context:
-    runs-on: arc-runner-set-arc-container-build-demo
+    runs-on: ubuntu-latest
     env:
       GITHUB_CONTEXT: ${{ toJson(github) }}
     steps:

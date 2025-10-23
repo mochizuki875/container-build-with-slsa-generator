@@ -64,6 +64,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}  # Get tags from outputs of meta step
           labels: ${{ steps.meta.outputs.labels }}  # Get labels from outputs of meta step
+          provenance: false
+          sbom: false
 
       - name: Output image
         id: image

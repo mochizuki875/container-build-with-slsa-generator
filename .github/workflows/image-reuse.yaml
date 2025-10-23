@@ -21,13 +21,13 @@ on:
     outputs:
       image:
         description: 'Built container image name'
-        value: ${{ jobs.build.outputs.image }}
+        value: ${{ jobs.publish.outputs.image }}
       digest:
         description: 'Built container image digest'
-        value: ${{ jobs.build.outputs.digest }}
+        value: ${{ jobs.publish.outputs.digest }}
 
 jobs:
-  build:
+  publish:
     permissions:
       contents: read
       packages: write

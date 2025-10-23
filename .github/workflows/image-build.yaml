@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build:
+  image-build-and-push:
     permissions:
       contents: read
       packages: write
@@ -35,7 +35,7 @@ jobs:
 
   # This step calls the container workflow to generate provenance and push it to the container registry.
   provenance:
-    needs: [build]
+    needs: [image-build-and-push]
     permissions:
       actions: read # for detecting the Github Actions environment.
       id-token: write # for creating OIDC tokens for signing.
@@ -43,8 +43,8 @@ jobs:
     # if: startsWith(github.ref, 'refs/tags/') # タグが付いたときのみ実行
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.1.0  # Provenanceを生成するReusable Workflowを呼び出す
     with:
-      image: ${{ needs.build.outputs.image }}
-      digest: ${{ needs.build.outputs.digest }}
+      image: ${{ needs.image-build-and-push.outputs.image }}
+      digest: ${{ needs.image-build-and-push.outputs.digest }}
       registry-username: ${{ github.actor }}
     secrets:
       registry-password: ${{ secrets.GITHUB_TOKEN }}

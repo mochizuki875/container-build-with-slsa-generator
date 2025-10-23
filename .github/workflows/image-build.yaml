@@ -3,9 +3,9 @@ on:
   workflow_dispatch:  # 手動実行をtriggerにする
   push:
 
-# env:
-#   IMAGE_REGISTRY: ghcr.io
-#   IMAGE_NAME: ${{ github.repository }}
+env:
+  IMAGE_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   image-build-and-push:
@@ -14,8 +14,8 @@ jobs:
       packages: write
     uses: ./.github/workflows/image-reuse.yaml
     with:
-      image-registry: ghcr.io
-      image-name: ${{ github.repository }}
+      image-registry: ${{ env.IMAGE_REGISTRY }}
+      image-name: ${{ env.IMAGE_NAME }}
     secrets:
       ghcr_username: ${{ github.actor }}
       ghcr_password: ${{ secrets.GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.1.0  # Provenanceを生成するReusable Workflowを呼び出す
     with:
       # image: ${{ needs.image-build-and-push.outputs.image }}
-      image: ${{ needs.image-build-and-push.input.image-registry }}/${{ needs.image-build-and-push.input.image-name }}
+      image: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}
       digest: ${{ needs.image-build-and-push.outputs.image-digest }}
       registry-username: ${{ github.actor }}
     secrets:

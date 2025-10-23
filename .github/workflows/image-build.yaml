@@ -44,7 +44,7 @@ jobs:
     # if: startsWith(github.ref, 'refs/tags/') # タグが付いたときのみ実行
     uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v2.1.0  # Provenanceを生成するReusable Workflowを呼び出す
     with:
-      image: ghcr.io/${{ github.repository }}
+      image: ghcr.io/${{ github.repository }}  # Reusable Workflowのoutputでイメージ名を出力できない(secret情報と認識される)のでこのようにした
       digest: ${{ needs.image-build-and-push.outputs.image-digest }}
       registry-username: ${{ github.actor }}
     secrets:

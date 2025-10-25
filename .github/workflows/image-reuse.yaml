@@ -60,5 +60,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}  # Get tags from outputs of meta step
           labels: ${{ steps.meta.outputs.labels }}  # Get labels from outputs of meta step
-          provenance: false
+          provenance: true
           sbom: false
